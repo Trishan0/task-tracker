@@ -31,9 +31,10 @@ def add_task(task_description, status, file_name):
     
     # Create new task
     new_task = {
+        'id': len(task_list)+1,
         'task': task_description,
         'status': status if status else 'Not Done',
-        'created_at': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        'created_at': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     }
     
     # Add new task to the list
@@ -41,20 +42,24 @@ def add_task(task_description, status, file_name):
     
     # Save updated task list
     save_tasks(task_list, file_name)
+    print(f"Task added with ID: {new_task['id']}")
+    return new_task['id']
 
 def main():
     parser = argparse.ArgumentParser(
         description="Capture and save tasks to a JSON file")
 
-    parser.add_argument('task', type=str, help='Task Description')
-    parser.add_argument('--status', '-s', type=str,
-                        choices=['Done', 'In Progress', 'Not Done'], 
-                        default='Not Done',
-                        help="Progress of the Task")
+    subparsers = parser.add_subparsers(dest="command", help="Available Commands")
+
+    #Add task cmd
+    add_parser = subparsers.add_parser('add', help="Add a new task")
+    add_parser.add_argument('task', type=str, help="Task Description")
+    add_parser.add_argument('--status', '-s', choices=['done','in progress','not done'], default='not done', help="Progress of the task")
+    
 
     args = parser.parse_args()
 
-    if args.task:
+    if args.command == 'add':
         add_task(args.task, args.status, FILE_NAME)
     else:
         print("Please provide a task description")
