@@ -35,6 +35,8 @@ def add_task(task_description, status, file_name):
         'task': task_description,
         'status': status if status else 'Not Done',
         'created_at': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        'updated_at': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     }
     
     # Add new task to the list
@@ -45,22 +47,55 @@ def add_task(task_description, status, file_name):
     print(f"Task added with ID: {new_task['id']}")
     return new_task['id']
 
+def update_task(task_id, new_description=None, new_status=None, file_name=FILE_NAME):
+    """Update an existing task by ID."""
+    task_list = load_tasks(file_name)
+    
+    for task in task_list["tasks"]:
+        if task["id"] == task_id:
+            if new_description:
+                task["task"] = new_description
+            if new_status:
+                task["status"] = new_status
+            task["updated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            save_tasks(task_list, file_name)
+            print(f"Task {task_id} updated successfully")
+            return True
+        
+    print(f"Task with ID {task_id} not found")
+    return False       
+     
 def main():
     parser = argparse.ArgumentParser(
         description="Capture and save tasks to a JSON file")
 
     subparsers = parser.add_subparsers(dest="command", help="Available Commands")
 
-    #Add task cmd
+    #Add task command
     add_parser = subparsers.add_parser('add', help="Add a new task")
     add_parser.add_argument('task', type=str, help="Task Description")
     add_parser.add_argument('--status', '-s', choices=['done','in progress','not done'], default='not done', help="Progress of the task")
     
 
+    #Update task command
+    update_parser = subparsers.add_parser('update', help="Update an existing task")
+    update_parser.add_argument('id',type=int, help="Task ID")
+    update_parser.add_argument('--description','-d',type=str, help="New task description")
+    update_parser.add_argument('--status','-s', type=str,
+                               choices=['done', 'in progress', 'not done'],
+                               default='not done',
+                               help="New task status")
+    
+    
     args = parser.parse_args()
 
     if args.command == 'add':
         add_task(args.task, args.status, FILE_NAME)
+    elif args.command == 'update':
+        if not (args.description or args.status):
+            print("Please provide either new description or status to update")
+            return
+        update_task(args.id, args.description, args.status)
     else:
         print("Please provide a task description")
 
