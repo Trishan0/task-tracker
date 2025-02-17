@@ -1,15 +1,14 @@
-# pyproject.toml
-
 [build-system]
 requires = ["setuptools>=64.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "Tasker"
+name = "tasker"
 version = "0.0.1"
-description = "CLI application for Add, Update , Delete Tasks"
+description = "CLI application written from python for adding, updating, and deleting tasks"
 readme = "README.md"
 authors = [{ name = "Trishan Fernando", email = "sanjanatrishan@gmail.com" }]
 
+
 [project.scripts]
-task_tracker = "task_tracker.__main__:main"
+tasker = "task_tracker.tasker:main"
