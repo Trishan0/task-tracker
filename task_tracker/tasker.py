@@ -87,21 +87,50 @@ def delete_task(task_id, file_name=FILE_NAME):
         print(f"Task with ID {task_id} not found")
         return False
     
-def list_tasks(file_name=FILE_NAME):
-    """List all tasks."""
+def list_tasks(status=None, file_name=FILE_NAME):
+    """
+    List tasks, optionally filtered by status.
+    
+    Args:
+        status (str, optional): Filter tasks by this status. If None, shows all tasks
+        file_name (str): The JSON file storing the tasks
+    """
     task_list = load_tasks(file_name)
     
     if not task_list["tasks"]:
-        print("No tasks found!")
+        print("No tasks found")
         return
     
-    for task in task_list["tasks"]:
-        print(f"\nID: {task['id']}")
+    # Filter tasks if status is provided
+    filtered_tasks = task_list["tasks"]
+    if status:
+        status = status.title()
+        filtered_tasks = [task for task in task_list["tasks"] 
+                         if task["status"].lower() == status.lower()]
+        
+        if not filtered_tasks:
+            print(f"No tasks found with status: {status}")
+            return
+    
+    if status:
+        print(f"\nShowing tasks with status: {status}")
+    else:
+        print("\nShowing all tasks:")
+    
+    print("-" * 50)
+    
+    # Display tasks with consistent formatting
+    for task in filtered_tasks:
+        print(f"ID: {task['id']}")
         print(f"Task: {task['task']}")
         print(f"Status: {task['status']}")
         print(f"Created: {task['created_at']}")
         print(f"Last Updated: {task['updated_at']}")
-        print("-" * 50)        
+        print("-" * 50)
+    
+    # Show summary count
+    print(f"\nTotal tasks shown: {len(filtered_tasks)}")
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -128,7 +157,9 @@ def main():
     delete_parser = subparsers.add_parser('delete', help="Delete a task")
     delete_parser.add_argument('id', type=int, help="Task ID")
     
-    subparsers.add_parser('list', help='List all tasks')
+    # View task command
+    list_parser = subparsers.add_parser('list', help='List all tasks')
+    list_parser.add_argument("status", type=str, nargs='?', default=None, help="Status of the tasks to list (optional)")
 
     args = parser.parse_args()
 
@@ -142,7 +173,7 @@ def main():
     elif args.command == 'delete':
         delete_task(args.id)
     elif args.command == 'list':
-        list_tasks()
+        list_tasks(args.status)
     else:
         parser.print_help()
 
