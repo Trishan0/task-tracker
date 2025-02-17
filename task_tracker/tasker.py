@@ -1,17 +1,40 @@
 import argparse
-from pathlib import Path
+import json
+from datetime import datetime
 
-parser = argparse.ArgumentParser()
+file_name = 'task_list.json'
 
-parser.add_argument("path")
 
-args = parser.parse_args()
+def add_task(task, file_name):
+    try:
+        with open(file_name, 'a')as t:
+            json.dump(task, t, indent=4)
+            t.write("\n")
+        print(f"Data saved to {file_name}")
 
-target_dir = Path(args.path)
+    except Exception as e:
+        print(f"Error writing to file: {e}")
 
-if not target_dir.exists():
-    print("The target directory doesn't exist")
-    raise SystemExit(1)
 
-for entry in target_dir.iterdir():
-    print(entry.name)
+def main():
+    parser = argparse.ArgumentParser(
+        description="Capture and save user input to a JSON file")
+
+    parser.add_argument('task', type=str, help='Task Description')
+    parser.add_argument('--status', '-s', type=str,
+                        choices=['Done', 'In Progress', 'Not Done'], help="Progress of the Task")
+
+    args = parser.parse_args()
+
+    if args.task:
+        task_data = {
+            'task': args.task,
+            'priority': args.status if args.status else 'medium'
+        }
+        add_task(task_data, file_name)
+    else:
+        print("Please provide a task description")
+
+
+if __name__ == '__main__':
+    main()
