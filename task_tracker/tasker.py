@@ -65,6 +65,22 @@ def update_task(task_id, new_description=None, new_status=None, file_name=FILE_N
     print(f"Task with ID {task_id} not found")
     return False       
      
+def delete_task(task_id, file_name=FILE_NAME):
+    """"Delete a task by ID"""
+    
+    task_list = load_tasks(file_name)
+    
+    initial_length = len(task_list["tasks"])
+    task_list["tasks"] = [task for task in task_list["tasks"] if task["id"] != task_id]
+    
+    if len(task_list["tasks"]) < initial_length:
+        save_tasks(task_list, file_name)
+        print(f"Task {task_id} deleted successfully")
+        return True
+    else:
+        print(f"Task with ID {task_id} not found")
+        return False
+
 def main():
     parser = argparse.ArgumentParser(
         description="Capture and save tasks to a JSON file")
@@ -86,7 +102,9 @@ def main():
                                default='not done',
                                help="New task status")
     
-    
+    # Delete task command
+    delete_parser = subparsers.add_parser('delete', help="Delete a task")
+    delete_parser.add_argument('id', type=int, help="Task ID")
     args = parser.parse_args()
 
     if args.command == 'add':
@@ -96,8 +114,10 @@ def main():
             print("Please provide either new description or status to update")
             return
         update_task(args.id, args.description, args.status)
+    elif args.command == 'delete':
+        delete_task(args.id)
     else:
-        print("Please provide a task description")
+        parser.print_help()
 
 if __name__ == '__main__':
     main()
