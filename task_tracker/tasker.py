@@ -29,9 +29,15 @@ def add_task(task_description, status, file_name):
     # Load existing tasks
     task_list = load_tasks(file_name)
     
+    #Determine the next task ID
+    if task_list["tasks"]:
+        next_id = max(task["id"] for task in task_list["tasks"]) + 1
+    else:
+        next_id = 1
+    
     # Create new task
     new_task = {
-        'id': len(task_list)+1,
+        'id': next_id,
         'task': task_description,
         'status': status if status else 'Not Done',
         'created_at': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
