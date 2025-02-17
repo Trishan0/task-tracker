@@ -4,3 +4,9 @@ __pycache__/
 *$py.class
 
 .vscode/
+
+# Distribution / packaging
+*.egg-info/
+
+# Environments
+venv/
