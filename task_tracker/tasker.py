@@ -86,6 +86,22 @@ def delete_task(task_id, file_name=FILE_NAME):
     else:
         print(f"Task with ID {task_id} not found")
         return False
+    
+def list_tasks(file_name=FILE_NAME):
+    """List all tasks."""
+    task_list = load_tasks(file_name)
+    
+    if not task_list["tasks"]:
+        print("No tasks found!")
+        return
+    
+    for task in task_list["tasks"]:
+        print(f"\nID: {task['id']}")
+        print(f"Task: {task['task']}")
+        print(f"Status: {task['status']}")
+        print(f"Created: {task['created_at']}")
+        print(f"Last Updated: {task['updated_at']}")
+        print("-" * 50)        
 
 def main():
     parser = argparse.ArgumentParser(
@@ -111,6 +127,9 @@ def main():
     # Delete task command
     delete_parser = subparsers.add_parser('delete', help="Delete a task")
     delete_parser.add_argument('id', type=int, help="Task ID")
+    
+    subparsers.add_parser('list', help='List all tasks')
+
     args = parser.parse_args()
 
     if args.command == 'add':
@@ -122,6 +141,8 @@ def main():
         update_task(args.id, args.description, args.status)
     elif args.command == 'delete':
         delete_task(args.id)
+    elif args.command == 'list':
+        list_tasks()
     else:
         parser.print_help()
 
