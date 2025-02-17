@@ -90,10 +90,6 @@ def delete_task(task_id, file_name=FILE_NAME):
 def list_tasks(status=None, file_name=FILE_NAME):
     """
     List tasks, optionally filtered by status.
-    
-    Args:
-        status (str, optional): Filter tasks by this status. If None, shows all tasks
-        file_name (str): The JSON file storing the tasks
     """
     task_list = load_tasks(file_name)
     
