@@ -141,7 +141,7 @@ def main():
     #Add task command
     add_parser = subparsers.add_parser('add', help="Add a new task")
     add_parser.add_argument('task', type=str, help="Task Description")
-    add_parser.add_argument('--status', '-s', choices=['todo','in-progress','done'], default='not done', help="Progress of the task")
+    add_parser.add_argument('--status', '-s', choices=['not done','in progress','done'], default='not done', help="Progress of the task")
     
 
     #Update task command
@@ -149,7 +149,7 @@ def main():
     update_parser.add_argument('id',type=int, help="Task ID")
     update_parser.add_argument('--description','-d',type=str, help="New task description")
     update_parser.add_argument('--status','-s', type=str,
-                               choices=['done', 'in progress', 'not done'],
+                               choices=['not done', 'in progress', 'done'],
                                default='not done',
                                help="New task status")
     
